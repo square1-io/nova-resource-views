@@ -1,0 +1,7 @@
+<script>
+import DeleteResourceModal from "@nova/components/Modals/DeleteResourceModal";
+
+export default {
+    extends: DeleteResourceModal
+};
+</script>

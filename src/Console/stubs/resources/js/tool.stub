@@ -1,0 +1,28 @@
+Nova.booting((Vue, router, store) => {
+  router.addRoutes([
+    {
+      name: 'res-{{ resource }}-index',
+      path: '/res/:resourceName',
+      component: require('./views/Index'),
+      props: true
+    },
+    {
+      name: 'res-{{ resource }}-create',
+      path: '/res/:resourceName/new',
+      component: require('./views/Create'),
+      props: true
+    },
+    {
+      name: 'res-{{ resource }}-detail',
+      path: '/res/:resourceName/:resourceId',
+      component: require('./views/Detail'),
+      props: true
+    },
+    {
+      name: 'res-{{ resource }}-edit',
+      path: '/res/:resourceName/:resourceId/edit',
+      component: require('./views/Update'),
+      props: true
+    }
+  ]);
+});

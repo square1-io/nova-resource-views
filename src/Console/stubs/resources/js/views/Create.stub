@@ -1,0 +1,82 @@
+<template>
+    <loading-view :loading="loading">
+        <form
+            v-if="panels"
+            @submit="submitViaCreateResource"
+            autocomplete="off"
+            ref="form"
+        >
+            <form-panel
+                class="mb-8"
+                v-for="panel in panelsWithFields"
+                :panel="panel"
+                :name="panel.name"
+                :key="panel.name"
+                :resource-name="resourceName"
+                :fields="panel.fields"
+                mode="form"
+                :validation-errors="validationErrors"
+                :via-resource="viaResource"
+                :via-resource-id="viaResourceId"
+                :via-relationship="viaRelationship"
+            />
+
+            <!-- Create Button -->
+            <div class="flex items-center">
+                <cancel-button />
+
+                <progress-button
+                    dusk="create-and-add-another-button"
+                    class="mr-3"
+                    @click.native="submitViaCreateResourceAndAddAnother"
+                    :disabled="isWorking"
+                    :processing="wasSubmittedViaCreateResourceAndAddAnother"
+                >
+                    {{ __("Create & Add Another") }}
+                </progress-button>
+
+                <progress-button
+                    dusk="create-button"
+                    type="submit"
+                    :disabled="isWorking"
+                    :processing="wasSubmittedViaCreateResource"
+                >
+                    {{ __("Create :resource", { resource: singularName }) }}
+                </progress-button>
+            </div>
+        </form>
+    </loading-view>
+</template>
+
+<script>
+import Create from "@nova/views/Create";
+
+export default {
+    mixins: [Create],
+    methods: {
+        async createRequest() {
+            let response = await Nova.request().post(
+                `/nova-api/${this.resourceName}`,
+                this.createResourceFormData(),
+                {
+                    params: {
+                        editing: true,
+                        editMode: "create"
+                    }
+                }
+            );
+
+            let redirect = this.$router.resolve({
+                name: "res-{{ resource }}-detail",
+                params: {
+                    resourceName: this.resourceName,
+                    resourceId: response.data.id
+                }
+            }).href;
+
+            response.data.redirect = redirect.replace("/nova", "");
+            return response;
+        }
+    }
+};
+</script>
